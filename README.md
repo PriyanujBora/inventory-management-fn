@@ -1,2 +1,2 @@
 # inventory-management-fn
-frontend repo of frontend of inventory-management
+repo of frontend of inventory-management
