@@ -1,9 +1,13 @@
+import { CATEGORY_LABELS, COUNT_STATUS_LABELS, MOVEMENT_LABELS, ROLE_LABELS } from '../utils/labels';
+
 const LABELS = {
-  type: { consumable: 'Consumable', sellable: 'Sellable' },
-  status: { in: 'IN', out: 'OUT' },
+  category: CATEGORY_LABELS,
+  movement: MOVEMENT_LABELS,
+  role: ROLE_LABELS,
+  countStatus: COUNT_STATUS_LABELS,
 };
 
-// <Badge kind="type" value="sellable" /> or <Badge kind="status" value="in" />
+// <Badge kind="category" value="retail" />, <Badge kind="movement" value="sold" />, …
 export default function Badge({ kind, value }) {
-  return <span className={`badge badge--${value}`}>{LABELS[kind][value] ?? value}</span>;
+  return <span className={`badge badge--${kind}-${value}`}>{LABELS[kind][value] ?? value}</span>;
 }

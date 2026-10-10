@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 
-// A code is ignored while it stays in view and for this long after it was last seen,
-// so holding a barcode in front of the camera doesn't flip it IN/OUT over and over.
-const REPEAT_WINDOW_MS = 3000;
+// A code counts once per appearance: it is ignored while it stays in view and must be out of
+// the frame for this long before it counts again. Identical items are scanned one after another,
+// so each must be moved away first. (Keyboard scanners have no such rule; every trigger counts.)
+const ABSENT_BEFORE_REPEAT_MS = 1500;
 
 const INSECURE_PAGE_MESSAGE =
   'The camera only works on https:// pages or on localhost. To scan with a phone, start the app with "npm run dev:https".';
@@ -24,7 +25,7 @@ const cameraErrorMessage = (err) => {
   }
 };
 
-export default function CameraScanner({ onDetected, paused }) {
+export default function CameraScanner({ onDetected, paused, pausedMessage = 'Paused.' }) {
   const viewportRef = useRef(null);
   const onDetectedRef = useRef(onDetected);
   const pausedRef = useRef(paused);
@@ -57,7 +58,7 @@ export default function CameraScanner({ onDetected, paused }) {
 
         const code = result.getText();
         const now = Date.now();
-        const seenRecently = now - (lastSeenAt.get(code) ?? 0) < REPEAT_WINDOW_MS;
+        const seenRecently = now - (lastSeenAt.get(code) ?? 0) < ABSENT_BEFORE_REPEAT_MS;
         lastSeenAt.set(code, now);
 
         if (!seenRecently && !pausedRef.current) onDetectedRef.current(code);
@@ -83,7 +84,9 @@ export default function CameraScanner({ onDetected, paused }) {
     <div className="camera">
       <div ref={viewportRef} className="camera__viewport" />
       <p className="camera__hint muted">
-        {paused ? 'Paused while you name the new product.' : 'Hold the barcode steady, about a hand-width from the camera.'}
+        {paused
+          ? pausedMessage
+          : 'Hold the barcode steady, about a hand-width away. Move the item away and back to scan the next one.'}
       </p>
     </div>
   );

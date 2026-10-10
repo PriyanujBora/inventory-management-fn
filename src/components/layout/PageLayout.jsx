@@ -1,12 +1,16 @@
 import NavBar from './NavBar';
 
-export default function PageLayout({ title, children }) {
+// `actions` sit beside the title, e.g. an "Export CSV" button.
+export default function PageLayout({ title, actions, children }) {
   return (
     <>
-      <title>{`${title} · Inventory Scanner`}</title>
+      <title>{`${title} · Salon Stock`}</title>
       <NavBar />
       <main className="page">
-        <h1 className="page__title">{title}</h1>
+        <div className="page__header">
+          <h1 className="page__title">{title}</h1>
+          {actions && <div className="page__actions">{actions}</div>}
+        </div>
         {children}
       </main>
     </>
